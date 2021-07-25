@@ -62,6 +62,7 @@
             android:layout_marginRight="10dp">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edNoticeTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Title of the notice" />
@@ -75,6 +76,7 @@
             android:layout_marginRight="0dp">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edNoticeDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
@@ -85,6 +87,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnUploadNotice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
