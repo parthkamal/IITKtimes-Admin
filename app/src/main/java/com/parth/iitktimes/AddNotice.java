@@ -27,6 +27,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnPausedListener;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -157,6 +158,7 @@ public class AddNotice extends AppCompatActivity {
 
     private void uploadImage() {
         progressDialog.setMessage("Uploading...");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progressDialog.show();
         //creating firebase storage reference
         FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -177,12 +179,12 @@ public class AddNotice extends AppCompatActivity {
         //adding success and failure listeners to the uploadTask
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
-            public void onFailure(@NonNull @org.jetbrains.annotations.NotNull Exception e) {
+            public void onFailure(@NonNull @NotNull Exception e) {
                 Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
             }
         }).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
             @Override
-            public void onComplete(@NonNull @org.jetbrains.annotations.NotNull Task<UploadTask.TaskSnapshot> task) {
+            public void onComplete(@NonNull @NotNull Task<UploadTask.TaskSnapshot> task) {
                 if (task.isSuccessful()) {
                     uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
@@ -196,6 +198,7 @@ public class AddNotice extends AppCompatActivity {
                                     //now since the task is completed we are uploading the data now;
                                     uploadData();
                                     progressDialog.dismiss();
+                                    Toast.makeText(getApplicationContext(), "Added Notice Successfully", Toast.LENGTH_SHORT).show();
                                 }
                             });
                         }
@@ -207,9 +210,18 @@ public class AddNotice extends AppCompatActivity {
             }
         }).addOnPausedListener(new OnPausedListener<UploadTask.TaskSnapshot>() {
             @Override
-            public void onPaused(@NonNull @org.jetbrains.annotations.NotNull UploadTask.TaskSnapshot snapshot) {
+            public void onPaused(@NonNull @NotNull UploadTask.TaskSnapshot snapshot) {
                 Toast.makeText(getApplicationContext(), "pauses", Toast.LENGTH_SHORT).show();
                 progressDialog.dismiss();
+            }
+        })
+        .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onProgress(@NonNull @NotNull UploadTask.TaskSnapshot snapshot) {
+                double progress = 100.0 * (snapshot.getBytesTransferred() / snapshot.getTotalByteCount());
+                int currentprogress = (int) progress;
+                //updating the progress dialog
+                progressDialog.setProgress(currentprogress);
             }
         });
     }

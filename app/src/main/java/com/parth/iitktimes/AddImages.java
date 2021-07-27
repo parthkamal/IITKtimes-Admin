@@ -7,8 +7,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
@@ -28,6 +31,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnPausedListener;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -48,11 +52,11 @@ public class AddImages extends AppCompatActivity {
     private Bitmap bitmap;
     private String downloadUrl="";
     private ProgressDialog progressDialog;
+    UploadDataTask asyncTask =null;
 
 
 
     private ActivityResultLauncher<String> someActivityResultLauncher;
-
 
     //declaring constant
     private String imageCategory;
@@ -66,8 +70,8 @@ public class AddImages extends AppCompatActivity {
         select_event_image = findViewById(R.id.select_event_image);
         preview_events_image= findViewById(R.id.preview_events_image);
 
-        //setting the context for the progressDialog
         progressDialog = new ProgressDialog(this);
+
 
         String[] spinnerItems ={"Others","Festivals","Antaragni","Techkriti","Udghosh","Special"};
 
@@ -130,11 +134,13 @@ public class AddImages extends AppCompatActivity {
 
 
 
+
+
+
+    // built in functions
     private void uploadImage() {
-        progressDialog.setMessage("Uploading...");
+        progressDialog.setMessage("Uploading Events");
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progressDialog.setProgress(0);//initially progress is 0
-        progressDialog.setMax(100);//sets the maximum value 100
         progressDialog.show();
         //creating firebase storage reference
         FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -171,9 +177,10 @@ public class AddImages extends AppCompatActivity {
                                 public void onSuccess(Uri uri) {
                                     //here we have stored the download url of the uploaded image which we can use for downloading the image
                                     downloadUrl = String.valueOf(uri);
+                                    //dismissing the progressDialog
+//                                    progressDialog.dismiss();
                                     //now since the task is completed we are uploading the data now;
-                                    uploadData();
-                                    progressDialog.dismiss();
+                                    uploadImageData();
                                 }
                             });
                         }
@@ -189,11 +196,20 @@ public class AddImages extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "pauses", Toast.LENGTH_SHORT).show();
                 progressDialog.dismiss();
             }
+        }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onProgress(@NonNull @NotNull UploadTask.TaskSnapshot snapshot) {
+                double progress = 100.0 * (snapshot.getBytesTransferred() / snapshot.getTotalByteCount());
+                int currentprogress = (int) progress;
+                //updating the progress dialog
+                progressDialog.setProgress(currentprogress);
+            }
         });
+
     }
 
-    private void uploadData() {
-
+    private void uploadImageData() {
+//        progressDialog.setMessage("Uploading Events Category and Data");
         //giving reference to the database
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
         //referencing to the exact location in the database
@@ -222,7 +238,7 @@ public class AddImages extends AppCompatActivity {
             @Override
             public void onSuccess(Void unused) {
                 progressDialog.dismiss();
-
+                Toast.makeText(getApplicationContext(), "Added events successfully", Toast.LENGTH_SHORT).show();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -232,47 +248,104 @@ public class AddImages extends AppCompatActivity {
             }
         });
 
-
     }
 
 
-    //declaring a inner class for uploading writing eventsData
-    private class eventsData {
-        String EventsCategory, eventsDate, eventsTime, downloadUrl, uniqueKey;
 
-        public eventsData() {
+    //class for async task operations
+    private class UploadDataTask extends AsyncTask<Bitmap, Integer, Void> {
+        private Bitmap bitmap;
+
+        //empty constructor
+        public UploadDataTask(Bitmap bitmap) {
+            super();
+
         }
 
-        public eventsData(String eventsCategory, String eventsDate, String eventsTime, String downloadUrl, String uniqueKey) {
-            EventsCategory = eventsCategory;
-            this.eventsDate = eventsDate;
-            this.eventsTime = eventsTime;
+        //pre execute method of async task
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            //setting the context for the progressDialog
+            progressDialog = new ProgressDialog(getApplicationContext());
+            progressDialog.setCancelable(false);
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            progressDialog.setProgress(0);//initially progress is 0
+            progressDialog.setMax(100);//sets the maximum value 100
+            progressDialog.setMessage("Uploading...");
+            progressDialog.show();
+
+            //make a button for cancellation
+            progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    progressDialog.dismiss();
+                    asyncTask.cancel(true);
+                }
+            });
+        }
+
+        @Override
+        protected Void doInBackground(Bitmap... bitmaps) {
+            bitmap = bitmaps[0];
+            uploadImage();
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values[0]);
+            progressDialog.setProgress(values[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Void unused) {
+            super.onPostExecute(unused);
+            Toast.makeText(getApplicationContext(),"uploaded image successfully",Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+        }
+
+
+    }
+
+    //private class for eventsData
+    private class eventsData{
+        String eventsCategory,eventDate,eventTime,downloadUrl,uniqueKey;
+
+        public eventsData(String eventsCategory, String eventDate, String eventTime, String downloadUrl, String uniqueKey) {
+            this.eventsCategory = eventsCategory;
+            this.eventDate = eventDate;
+            this.eventTime = eventTime;
             this.downloadUrl = downloadUrl;
             this.uniqueKey = uniqueKey;
         }
 
         public String getEventsCategory() {
-            return EventsCategory;
+            return eventsCategory;
         }
 
         public void setEventsCategory(String eventsCategory) {
-            EventsCategory = eventsCategory;
+            this.eventsCategory = eventsCategory;
         }
 
-        public String getEventsDate() {
-            return eventsDate;
+        public String getEventDate() {
+            return eventDate;
         }
 
-        public void setEventsDate(String eventsDate) {
-            this.eventsDate = eventsDate;
+        public void setEventDate(String eventDate) {
+            this.eventDate = eventDate;
         }
 
-        public String getEventsTime() {
-            return eventsTime;
+        public String getEventTime() {
+            return eventTime;
         }
 
-        public void setEventsTime(String eventsTime) {
-            this.eventsTime = eventsTime;
+        public void setEventTime(String eventTime) {
+            this.eventTime = eventTime;
         }
 
         public String getDownloadUrl() {
@@ -291,4 +364,5 @@ public class AddImages extends AppCompatActivity {
             this.uniqueKey = uniqueKey;
         }
     }
+
 }
