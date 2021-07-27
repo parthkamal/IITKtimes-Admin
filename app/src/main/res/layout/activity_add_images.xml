@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AddNotice">
+    tools:context=".AddImages">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -13,7 +13,7 @@
         android:orientation="vertical">
 
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/select_image"
+            android:id="@+id/select_event_image"
             android:layout_width="130dp"
             android:layout_height="150dp"
             android:layout_margin="10dp"
@@ -52,42 +52,15 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <com.google.android.material.textfield.TextInputLayout
+
+        <Spinner
+            android:id="@+id/spinner_image_category"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginRight="10dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edNoticeTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Title of the notice" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginRight="0dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edNoticeDescription"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginRight="10dp"
-                android:hint="Description" />
-        </com.google.android.material.textfield.TextInputLayout>
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnUploadNotice"
+            android:id="@+id/btnUploadImage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
@@ -95,12 +68,11 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="10dp"
             android:layout_marginRight="10dp"
-            android:text="upload notice">
+            android:text="upload image">
 
         </com.google.android.material.button.MaterialButton>
 
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/preview_notice"
             android:layout_width="match_parent"
             android:layout_height="400dp"
             android:layout_marginStart="10dp"
@@ -112,7 +84,7 @@
             app:cardElevation="5dp">
 
             <ImageView
-                android:id="@+id/preview_image"
+                android:id="@+id/preview_events_image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"/>

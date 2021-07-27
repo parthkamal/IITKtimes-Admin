@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">IITK times</string>
+
+    <string-array name="events_array">
+        <item>Others</item>
+        <item>Festivals</item>
+        <item>Antaragni</item>
+        <item>Techkriti</item>
+        <item>Udghosh</item>
+        <item>Special Days</item>
+    </string-array>
 </resources>
