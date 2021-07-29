@@ -1,6 +1,7 @@
 package com.parth.iitktimes;
 
 import androidx.appcompat.app.AppCompatActivity;
+import com.parth.iitktimes.creators.addCreators;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,7 +11,7 @@ import com.google.android.material.card.MaterialCardView;
 
 public class MainActivity extends AppCompatActivity {
     private MaterialCardView AddNotice;
-    private MaterialCardView AddImages;
+    private MaterialCardView AddImages,AddCreator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,6 +19,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         AddNotice = findViewById(R.id.add_notice);
         AddImages = findViewById(R.id.add_images);
+        AddCreator = findViewById(R.id.update_members);
+
+        //on click listener for adding members
+        AddCreator.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this,addCreators.class));
+            }
+        });
 
         AddImages.setOnClickListener(new View.OnClickListener() {
             @Override

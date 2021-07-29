@@ -249,9 +249,6 @@ public class AddImages extends AppCompatActivity {
         });
 
     }
-
-
-
     //class for async task operations
     private class UploadDataTask extends AsyncTask<Bitmap, Integer, Void> {
         private Bitmap bitmap;
