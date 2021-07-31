@@ -197,7 +197,7 @@ public class updateCreators extends AppCompatActivity {
         //getting the key of the uploaded data
         final String uniqueKey = creatorsDataRef.push().getKey();
 
-        Creator creator = new Creator(Name, Post, Email, Phone, downloadUrl);
+        Creator creator = new Creator(Name, Post, Email, Phone, downloadUrl,uniqueKey);
 
 
         //storing the data with the unique key inside the reference

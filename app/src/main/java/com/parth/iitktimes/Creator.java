@@ -1,26 +1,37 @@
 package com.parth.iitktimes;
 
-public class Creator {
-    private String name,design,email,phone,downloadUrl;
+import java.io.Serializable;
 
-//    overloading the constructor
-    public Creator(String name, String design, String email, String phone, String downloadUrl) {
+public class Creator implements Serializable {
+    private String name,design,email,phone,downloadUrl,uniquekey;
+
+    public String getDownloadUrl() {
+        return downloadUrl;
+    }
+
+    public void setDownloadUrl(String downloadUrl) {
+        this.downloadUrl = downloadUrl;
+    }
+
+    public String getUniquekey() {
+        return uniquekey;
+    }
+
+    public void setUniquekey(String uniquekey) {
+        this.uniquekey = uniquekey;
+    }
+
+    public Creator(String name, String design, String email, String phone, String downloadUrl, String uniquekey) {
         this.name = name;
         this.design = design;
         this.email = email;
         this.phone = phone;
         this.downloadUrl = downloadUrl;
+        this.uniquekey = uniquekey;
     }
 
     //empty constructor
     public Creator() {
-    }
-
-    public Creator(String name, String design, String email, String phone) {
-        this.name = name;
-        this.design = design;
-        this.email = email;
-        this.phone = phone;
     }
 
     public String getName() {
