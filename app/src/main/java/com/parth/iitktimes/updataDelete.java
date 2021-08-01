@@ -190,7 +190,7 @@ public class updataDelete extends AppCompatActivity {
         databaseReference.child("design").setValue(Post);
         databaseReference.child("email").setValue(Email);
         //we dont need to change the key
-        databaseReference.child("mobile").setValue(Phone);
+        databaseReference.child("phone").setValue(Phone);
 
     }
 

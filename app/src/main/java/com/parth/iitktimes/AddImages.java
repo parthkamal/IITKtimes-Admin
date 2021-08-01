@@ -73,6 +73,7 @@ public class AddImages extends AppCompatActivity {
         progressDialog = new ProgressDialog(this);
 
 
+
         String[] spinnerItems ={"Others","Festivals","Antaragni","Techkriti","Udghosh","Special"};
 
         //attaching array adapter to the spinner
@@ -118,6 +119,7 @@ public class AddImages extends AppCompatActivity {
                 someActivityResultLauncher.launch("image/*");
             }
         });
+
 
         //upload image click listener
         btnUploadImage.setOnClickListener(new View.OnClickListener() {

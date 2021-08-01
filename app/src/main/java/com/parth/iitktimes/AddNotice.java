@@ -9,7 +9,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultCallback;
@@ -136,8 +135,7 @@ public class AddNotice extends AppCompatActivity {
         String currentTime = timeFormat.format(calendarForUploading.getTime());
 
         //making a notice data object
-        NoticeData noticeData = new NoticeData(NoticeTitle, currentDate, currentTime, downloadUrl, NoticeDescription, uniqueKey);
-
+        NoticeData noticeData = new NoticeData(NoticeTitle,currentDate,currentTime,downloadUrl,NoticeDescription,uniqueKey);
         //storing the data with the unique key inside the reference
         noticeDataRef.child(uniqueKey).setValue(noticeData).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
@@ -232,59 +230,4 @@ public class AddNotice extends AppCompatActivity {
     }
 
     //declaring a inner class for uploading writing Notice Data
-    private class NoticeData {
-        String NoticeTitle, NoticeDate, NoticeTime, downloadUrl, NoticeDescription, uniqueKey;
-
-        public NoticeData() {
-        }
-
-        public NoticeData(String noticeTitle, String noticeDate, String noticeTime, String downloadUrl, String noticeDescription, String uniqueKey) {
-            NoticeTitle = noticeTitle;
-            NoticeDate = noticeDate;
-            NoticeTime = noticeTime;
-            this.downloadUrl = downloadUrl;
-            NoticeDescription = noticeDescription;
-            this.uniqueKey = uniqueKey;
-        }
-
-        public String getNoticeTitle() {
-            return NoticeTitle;
-        }
-
-        public void setNoticeTitle(String noticeTitle) {
-            NoticeTitle = noticeTitle;
-        }
-
-        public String getNoticeDate() {
-            return NoticeDate;
-        }
-
-        public void setNoticeDate(String noticeDate) {
-            NoticeDate = noticeDate;
-        }
-
-        public String getNoticeTime() {
-            return NoticeTime;
-        }
-
-        public void setNoticeTime(String noticeTime) {
-            NoticeTime = noticeTime;
-        }
-
-        public String getDownloadUrl() {
-            return downloadUrl;
-        }
-
-        public void setDownloadUrl(String downloadUrl) {
-            this.downloadUrl = downloadUrl;
-        }
-
-        public String getNoticeDescription() {
-            return NoticeDescription;
-        }
-
-        public void setNoticeDescription(String noticeDescription) {
-            NoticeDescription = noticeDescription;
-        }
-    }
 }
