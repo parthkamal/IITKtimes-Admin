@@ -6,6 +6,9 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.parth.iitktimes.book;
+
 import android.app.ProgressDialog;
 import android.database.Cursor;
 import android.net.Uri;
@@ -23,6 +26,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.card.MaterialCardView;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
@@ -40,9 +44,10 @@ public class addBooks extends AppCompatActivity {
     private Button btnUpload;
     private ActivityResultLauncher<String> someActivityResultLauncher; // why string
     private Uri pdfUri;
-    private Note document;
     private ProgressDialog progressDialog;
     private String fileName;
+    private String downloadUrl;
+    private book book;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,14 +61,13 @@ public class addBooks extends AppCompatActivity {
 
         progressDialog = new ProgressDialog(this);
 
-        //that's why we have created empty constructor
-        document = new Note();
+        book = new book();
 
         btnUpload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // here we will implement the logic for uploading pdf to the firebase
-                StorageReference sRef = FirebaseStorage.getInstance().getReference().child("Notes").child(fileName);
+                StorageReference sRef = FirebaseStorage.getInstance().getReference().child("Books").child(fileName);
                 if(pdfUri!=null){
                     progressDialog.setMessage("Uploading....");
                     progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
@@ -71,8 +75,16 @@ public class addBooks extends AppCompatActivity {
                     sRef.putFile(pdfUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            progressDialog.dismiss();
-                            Toast.makeText(getApplicationContext(),"Uplaoded successfully",Toast.LENGTH_SHORT).show();
+                            sRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    downloadUrl = String.valueOf(uri);
+                                    book.setDownloadUrl(downloadUrl);
+                                    uploadData();
+                                    progressDialog.dismiss();
+                                    Toast.makeText(getApplicationContext(),"Uplaoded successfully",Toast.LENGTH_SHORT).show();
+                                }
+                            });
                         }
                     }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                         @Override
@@ -108,12 +120,12 @@ public class addBooks extends AppCompatActivity {
         semSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                    document.setSemester(semSpinner.getSelectedItem().toString());
+                   book.setSemester(semSpinner.getSelectedItem().toString());
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-                document.setSemester(null);
+                book.setSemester(null);
             }
         });
 
@@ -130,12 +142,12 @@ public class addBooks extends AppCompatActivity {
         branchSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                document.setBranch(branchSpinner.getSelectedItem().toString());
+                book.setBranch(branchSpinner.getSelectedItem().toString());
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-               document.setBranch(null);
+               book.setBranch(null);
             }
         });
 
@@ -156,5 +168,24 @@ public class addBooks extends AppCompatActivity {
                 });
 
 
+    }
+
+
+    private void uploadData(){
+        DatabaseReference mdatabase = FirebaseDatabase.getInstance().getReference().child("Books");
+        final String uniqueKey = mdatabase.push().getKey();
+        book.setUniqueKey(uniqueKey);
+        book.setTitle(docName.getText().toString());
+        mdatabase.child(uniqueKey).setValue(book).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                progressDialog.dismiss();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull @NotNull Exception e) {
+                progressDialog.dismiss();
+            }
+        });
     }
 }

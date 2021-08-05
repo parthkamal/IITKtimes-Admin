@@ -1,26 +1,25 @@
 package com.parth.iitktimes;
 
-public class Note {
-    private String downloadUrl,semester,branch,uniqueKey;
-    // we have used downloadUrl and unique key to access the document for future purpose
+public class book {
+    private String title,semester,branch,downloadUrl,uniqueKey;
 
-    //empty constructor
-    public Note() {
+    public book() {
     }
 
-    public Note(String downloadUrl, String semester, String branch, String uniqueKey) {
-        this.downloadUrl = downloadUrl;
+    public book(String title, String semester, String branch, String downloadUrl, String uniqueKey) {
+        this.title = title;
         this.semester = semester;
         this.branch = branch;
+        this.downloadUrl = downloadUrl;
         this.uniqueKey = uniqueKey;
     }
 
-    public String getDownloadUrl() {
-        return downloadUrl;
+    public String getTitle() {
+        return title;
     }
 
-    public void setDownloadUrl(String downloadUrl) {
-        this.downloadUrl = downloadUrl;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getSemester() {
@@ -37,6 +36,14 @@ public class Note {
 
     public void setBranch(String branch) {
         this.branch = branch;
+    }
+
+    public String getDownloadUrl() {
+        return downloadUrl;
+    }
+
+    public void setDownloadUrl(String downloadUrl) {
+        this.downloadUrl = downloadUrl;
     }
 
     public String getUniqueKey() {
